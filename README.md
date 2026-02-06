@@ -52,3 +52,75 @@ public class EchoClient {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.*;
+import java.net.*;
+
+public class EchoServer {
+
+    private final static int PORT = 45000;
+
+    public static void main(String args[]) {
+
+        String echoin;
+
+        ServerSocket svrsoc = null;
+        Socket soc = null;
+        BufferedReader br = null;
+        PrintStream ps = null;
+
+        System.out.println("Listening on port " + PORT);
+
+        try {
+            // Create Server Socket
+            svrsoc = new ServerSocket(PORT);
+
+            // Wait for client connection
+            soc = svrsoc.accept();
+
+            // Input from client
+            br = new BufferedReader(
+                    new InputStreamReader(soc.getInputStream()));
+
+            // Output to client
+            ps = new PrintStream(soc.getOutputStream());
+
+            System.out.println("Connection accepted");
+            System.out.println("Connected for echo:");
+
+            while ((echoin = br.readLine()) != null) {
+
+                System.out.println("Server received: " + echoin +
+                        " | Sending back to client");
+
+                ps.println(echoin);
+
+                if (echoin.equals("end")) {
+                    System.out.println("Client disconnected");
+                    break;
+                }
+            }
+
+            // Close resources
+            br.close();
+            ps.close();
+            soc.close();
+            svrsoc.close();
+
+        } catch (IOException ioe) {
+            System.out.println(ioe);
+        }
+    }
+}
